@@ -15,22 +15,24 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid RowDefinitions="40,*">
+    <Grid RowDefinitions="40,*, *">
         <Button Grid.Row="0" Content="New row" Command="{Binding AddNewRow}" />
         <ItemsControl Grid.Row="1" ItemsSource="{Binding ElementsList}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock Text="{Binding Id}" Width="20" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding Text}" Loaded="Control_OnLoaded" 
-                                 KeyDown="Control_KeyDown"              
+                    <Grid ColumnDefinitions="*,*,*,*" Margin="5">
+                        <TextBlock Grid.Column="0" Text="{Binding Id}" Width="20" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Text="{Binding Text}" Loaded="Control_OnLoaded" 
+                                 KeyDown="Control_KeyDown" PointerReleased="InputElement_OnPointerReleased"            
                                  Tag="First"/>
-                        <TextBox Text="{Binding Text2}" Loaded="Control_OnLoaded"
+                        <TextBox Grid.Column="2" Text="{Binding Text2}" Loaded="Control_OnLoaded"
                                  KeyDown="Control_KeyDown"
                                  Tag="Second"/>
-                    </StackPanel>
+                        <CheckBox Grid.Column="3" Focusable="False"></CheckBox>
+                    </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <TextBox Grid.Row="2" Text="{Binding FindId}"/>
     </Grid>
 </Window>

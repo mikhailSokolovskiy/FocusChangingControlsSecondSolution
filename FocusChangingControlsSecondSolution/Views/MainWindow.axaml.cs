@@ -13,7 +13,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
     }
-    
+
     private void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
         var tb = sender as TextBox;
@@ -23,13 +23,13 @@ public partial class MainWindow : Window
             tb.Focus();
         }
     }
-   
+
     private void Control_KeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
             var tb = sender as TextBox;
-            if (IsLastTextBox(tb))  // если Enter нажат в последнем TextBox-е, то нужно создать новую строку
+            if (IsLastTextBox(tb)) // если Enter нажат в последнем TextBox-е, то нужно создать новую строку
             {
                 CreateNewRow(tb);
             }
@@ -39,13 +39,16 @@ public partial class MainWindow : Window
             }
         }
     }
+
     private bool IsLastTextBox(TextBox tb)
     {
         var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
-        if (IsOurTextbox(nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
+        if (IsOurTextbox(
+                nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
         {
             return false;
         }
+
         return true;
     }
 
@@ -59,6 +62,7 @@ public partial class MainWindow : Window
                 return true;
             }
         }
+
         return false;
     }
 
@@ -72,5 +76,12 @@ public partial class MainWindow : Window
     {
         var dc = DataContext as MainWindowViewModel;
         dc.AddNewRow.Execute(tb.DataContext as Elements).Subscribe();
+    }
+
+    private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        var dc = DataContext as MainWindowViewModel;
+        var tb = sender as TextBox;
+        dc.PointerReleased.Execute(tb.DataContext as Elements).Subscribe();
     }
 }

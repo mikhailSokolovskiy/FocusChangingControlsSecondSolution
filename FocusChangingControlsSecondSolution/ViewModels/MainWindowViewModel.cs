@@ -12,13 +12,20 @@ public class MainWindowViewModel : ViewModelBase
 {
     public ReactiveCommand<Elements, Unit> AddNewRow { get; set; }
     private ObservableCollection<Elements>? _elementsList;
-
+    public ReactiveCommand<Elements, Unit> PointerReleased { get; set; }
     public ObservableCollection<Elements>? ElementsList
     {
         get => _elementsList;
         set => this.RaiseAndSetIfChanged(ref _elementsList, value);
     }
 
+    private int _findId;
+
+    public int FindId
+    {
+        get => _findId;
+        set => this.RaiseAndSetIfChanged(ref _findId, value);
+    }
     public MainWindowViewModel()
     {
         ElementsList = new ObservableCollection<Elements>(new List<Elements>());
@@ -41,6 +48,10 @@ public class MainWindowViewModel : ViewModelBase
                     Text2 = "",
                 }
             );
+        });
+        PointerReleased = ReactiveCommand.Create<Elements>((el) =>
+        {
+            FindId = el.Id;
         });
     }
 }
