@@ -3,6 +3,7 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="FocusChangingControlsSecondSolution/App.axaml" value="FocusChangingControlsSecondSolution/FocusChangingControlsSecondSolution.csproj" />
         <entry key="FocusChangingControlsSecondSolution/Views/MainWindow.axaml" value="FocusChangingControlsSecondSolution/FocusChangingControlsSecondSolution.csproj" />
       </map>
     </option>

@@ -1,4 +1,5 @@
 using System;
+using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -24,6 +25,7 @@ public partial class MainWindow : Window
         }
     }
 
+    [Obsolete("Obsolete")]
     private void Control_KeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
@@ -40,11 +42,11 @@ public partial class MainWindow : Window
         }
     }
 
-    private bool IsLastTextBox(TextBox tb)
+    [Obsolete("Obsolete")]
+    private bool IsLastTextBox(TextBox? tb)
     {
         var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
-        if (IsOurTextbox(
-                nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
+        if (IsOurTextbox(nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
         {
             return false;
         }
@@ -53,11 +55,11 @@ public partial class MainWindow : Window
     }
 
     // "нашим" является TextBox, помеченный либо First, либо Second
-    private bool IsOurTextbox(IInputElement element)
+    private bool IsOurTextbox(IInputElement? element)
     {
         if (element is TextBox nextTb)
         {
-            if (nextTb.Tag == "First" || nextTb.Tag == "Second")
+            if (nextTb.Tag?.ToString() == "First")
             {
                 return true;
             }
@@ -66,22 +68,20 @@ public partial class MainWindow : Window
         return false;
     }
 
-    private void SwitchFocusToNextRow(TextBox tb)
+    [Obsolete("Obsolete")]
+    private void SwitchFocusToNextRow(TextBox? tb)
     {
-        var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
-        nextElement.Focus();
+        var nextElement = KeyboardNavigationHandler.GetNext(tb!, NavigationDirection.Next);
+        nextElement?.Focus();
     }
 
     private void CreateNewRow(TextBox? tb)
     {
-        var dc = DataContext as MainWindowViewModel;
-        dc.AddNewRow.Execute(tb.DataContext as Elements).Subscribe();
+        if (DataContext is MainWindowViewModel dc)
+        {
+            dc.AddNewRow.Execute(Unit.Default).Subscribe(); // Передаем Unit.Default
+            
+        }
     }
-
-    private void InputElement_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        var dc = DataContext as MainWindowViewModel;
-        var tb = sender as TextBox;
-        dc.PointerReleased.Execute(tb.DataContext as Elements).Subscribe();
-    }
+    
 }

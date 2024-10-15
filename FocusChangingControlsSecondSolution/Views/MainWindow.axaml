@@ -3,6 +3,7 @@
         xmlns:vm="using:FocusChangingControlsSecondSolution.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FocusChangingControlsSecondSolution.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="FocusChangingControlsSecondSolution.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -12,27 +13,27 @@
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="40,*, *">
+    <Grid RowDefinitions="40,*">
         <Button Grid.Row="0" Content="New row" Command="{Binding AddNewRow}" />
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding ElementsList}">
-            <ItemsControl.ItemTemplate>
+        
+        <ListBox Grid.Row="1" ItemsSource="{Binding ElementsList}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="*,*,*,*" Margin="5">
+                    <Grid ColumnDefinitions="*,*,*" Margin="5">
                         <TextBlock Grid.Column="0" Text="{Binding Id}" Width="20" VerticalAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding Text}" Loaded="Control_OnLoaded" 
-                                 KeyDown="Control_KeyDown" PointerReleased="InputElement_OnPointerReleased"            
-                                 Tag="First"/>
-                        <TextBox Grid.Column="2" Text="{Binding Text2}" Loaded="Control_OnLoaded"
-                                 KeyDown="Control_KeyDown"
-                                 Tag="Second"/>
-                        <CheckBox Grid.Column="3" Focusable="False"></CheckBox>
+                        <TextBox Tag="First" Grid.Column="1" Text="{Binding Text}" Loaded="Control_OnLoaded" KeyDown="Control_KeyDown"/>
+                        <CheckBox Grid.Column="2" Focusable="False"/>
                     </Grid>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <TextBox Grid.Row="2" Text="{Binding FindId}"/>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
