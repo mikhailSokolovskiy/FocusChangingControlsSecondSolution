@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
 using DynamicData;
 using FocusChangingControlsSecondSolution.Models;
 using ReactiveUI;
@@ -10,7 +11,7 @@ namespace FocusChangingControlsSecondSolution.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public ReactiveCommand<Unit, Unit> AddNewRow { get; }
+    public ReactiveCommand<Elements, Unit> AddNewRow { get; }
 
     private ObservableCollection<Elements> _elementsList;
     public ObservableCollection<Elements> ElementsList
@@ -23,18 +24,22 @@ public class MainWindowViewModel : ViewModelBase
     {
         ElementsList = new ObservableCollection<Elements>
         {
-            new Elements { Id = 1, Text = "First item" }
+            new() { Id = 1, Text = "First item" }
         };
 
-        AddNewRow = ReactiveCommand.Create(() =>
+        AddNewRow = ReactiveCommand.CreateFromTask<Elements>(async _ =>
         {
-           
-                ElementsList.Add(new Elements
-                {
-                    Id = ElementsList.Count + 1,
-                    Text = $"Item {ElementsList.Count + 1}"
-                });
-            
+            await CreateRow();
         });
+    }
+    
+    private Task CreateRow()
+    {
+        ElementsList.Add(new Elements
+        {
+            Id = ElementsList.Count + 1,
+            Text = $"Item {ElementsList.Count + 1}"
+        });
+        return Task.CompletedTask;
     }
 }

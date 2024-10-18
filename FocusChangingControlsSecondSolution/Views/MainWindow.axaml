@@ -15,22 +15,43 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="Transparent" BorderBrush="Transparent">
+                        <ContentPresenter
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+    </Window.Styles>
 
     <Grid RowDefinitions="40,*">
         <Button Grid.Row="0" Content="New row" Command="{Binding AddNewRow}" />
-        
-        <ListBox Grid.Row="1" ItemsSource="{Binding ElementsList}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
+        <ListBox Grid.Row="1" x:Name="ListBox" ItemsSource="{Binding ElementsList}" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="*,*,*" Margin="5">
-                        <TextBlock Grid.Column="0" Text="{Binding Id}" Width="20" VerticalAlignment="Center"/>
-                        <TextBox Tag="First" Grid.Column="1" Text="{Binding Text}" Loaded="Control_OnLoaded" KeyDown="Control_KeyDown"/>
-                        <CheckBox Grid.Column="2" Focusable="False"/>
+                        <TextBlock Grid.Column="0" Text="{Binding Id}" Width="100" VerticalAlignment="Center" />
+                        <TextBox Tag="First" Grid.Column="1" Text="{Binding Text}" KeyDown="Control_KeyDown"/>
+                        <CheckBox Grid.Column="2" Focusable="False" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

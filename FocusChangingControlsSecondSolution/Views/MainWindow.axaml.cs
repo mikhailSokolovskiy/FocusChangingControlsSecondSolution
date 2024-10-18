@@ -1,8 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using FocusChangingControlsSecondSolution.Models;
 using FocusChangingControlsSecondSolution.ViewModels;
 
@@ -15,38 +23,45 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    private void Control_OnLoaded(object? sender, RoutedEventArgs e)
+    //пока не нужно тк из-за виртуализации сразу будет фокус на появляющийся элемент
+    private async void Control_OnLoaded(object? sender, RoutedEventArgs e)
     {
+        await Task.Delay(1);
+
         var tb = sender as TextBox;
         // поскольку разом добавляется два TextBox-а, то фокус нужно поставить на первый из них
         if (tb.Tag == "First")
         {
-            tb.Focus();
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                tb.Focus();
+            });
         }
     }
 
-    [Obsolete("Obsolete")]
-    private void Control_KeyDown(object? sender, KeyEventArgs e)
+    private async void Control_KeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter)
+        await Task.Delay(1);
+        if (e.Key == Key.Enter && e.KeyModifiers == KeyModifiers.None)
         {
             var tb = sender as TextBox;
             if (IsLastTextBox(tb)) // если Enter нажат в последнем TextBox-е, то нужно создать новую строку
             {
-                CreateNewRow(tb);
+                await CreateNewRow(tb);
+                
             }
             else // иначе фокус должен переключиться на уже существующий TextBox
             {
-                SwitchFocusToNextRow(tb);
+                await SwitchFocusToNextRow(tb);
             }
         }
     }
 
-    [Obsolete("Obsolete")]
     private bool IsLastTextBox(TextBox? tb)
     {
         var nextElement = KeyboardNavigationHandler.GetNext(tb, NavigationDirection.Next);
-        if (IsOurTextbox(nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
+        if (IsOurTextbox(
+                nextElement)) // если tb - последний созданный TextBox, то за ним будет следовать не "наш" элемент
         {
             return false;
         }
@@ -68,20 +83,19 @@ public partial class MainWindow : Window
         return false;
     }
 
-    [Obsolete("Obsolete")]
-    private void SwitchFocusToNextRow(TextBox? tb)
+    private async Task SwitchFocusToNextRow(TextBox? tb)
     {
+        await Task.Delay(1);
         var nextElement = KeyboardNavigationHandler.GetNext(tb!, NavigationDirection.Next);
         nextElement?.Focus();
     }
 
-    private void CreateNewRow(TextBox? tb)
+    private async Task CreateNewRow(TextBox? tb)
     {
-        if (DataContext is MainWindowViewModel dc)
-        {
-            dc.AddNewRow.Execute(Unit.Default).Subscribe(); // Передаем Unit.Default
-            
-        }
+        await Task.Delay(1);
+        var dc = DataContext as MainWindowViewModel;
+        dc.AddNewRow.Execute(tb.DataContext as Elements).Subscribe();
+        
+
     }
-    
 }
