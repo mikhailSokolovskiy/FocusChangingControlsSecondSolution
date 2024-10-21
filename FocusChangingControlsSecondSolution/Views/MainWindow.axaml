@@ -48,10 +48,19 @@
         <ListBox Grid.Row="1" x:Name="ListBox" ItemsSource="{Binding ElementsList}" >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="*,*,*" Margin="5">
+                    <Grid ColumnDefinitions="*,*,*,*" Margin="5">
                         <TextBlock Grid.Column="0" Text="{Binding Id}" Width="100" VerticalAlignment="Center" />
-                        <TextBox Tag="First" Grid.Column="1" Text="{Binding Text}" KeyDown="Control_KeyDown"/>
-                        <CheckBox Grid.Column="2" Focusable="False" />
+                        <!-- Добавление обработчика Loaded -->
+                        <TextBox x:Name="FirstTextBox" Tag="First" Grid.Column="1" 
+                                 Text="{Binding Text1}" 
+                                 KeyDown="Control_KeyDown" 
+                                 Loaded="TextBox_Loaded" />
+
+                        <TextBox x:Name="SecondTextBox" Tag="Second" Grid.Column="2" 
+                                 Text="{Binding Text2}" 
+                                 KeyDown="Control_KeyDown" 
+                                 Loaded="TextBox_Loaded" />
+                        <CheckBox Grid.Column="3" Focusable="False" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

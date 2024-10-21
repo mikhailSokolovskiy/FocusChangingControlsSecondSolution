@@ -24,7 +24,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         ElementsList = new ObservableCollection<Elements>
         {
-            new() { Id = 1, Text = "First item" }
+            new() { Id = 1, Text1 = "First item", Text2 = "second item"  }
         };
 
         AddNewRow = ReactiveCommand.CreateFromTask<Elements>(async _ =>
@@ -38,7 +38,8 @@ public class MainWindowViewModel : ViewModelBase
         ElementsList.Add(new Elements
         {
             Id = ElementsList.Count + 1,
-            Text = $"Item {ElementsList.Count + 1}"
+            Text1 = $"Item {ElementsList.Count + 1}",
+            Text2 = $"Item2 {ElementsList.Count + 1}",
         });
         return Task.CompletedTask;
     }
