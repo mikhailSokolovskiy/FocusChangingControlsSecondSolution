@@ -26,4 +26,6 @@ public class Elements : ReactiveObject
         get => _text2;
         set => this.RaiseAndSetIfChanged(ref _text2, value);
     }
+    
+    public bool Visible { get; set; } = true;
 }

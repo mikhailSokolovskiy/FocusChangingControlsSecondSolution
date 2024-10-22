@@ -32,13 +32,10 @@ public partial class MainWindow : Window
         // поскольку разом добавляется два TextBox-а, то фокус нужно поставить на первый из них
         if (tb.Tag == "First")
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                tb.Focus();
-            });
+            Dispatcher.UIThread.InvokeAsync(() => { tb.Focus(); });
         }
     }
-    
+
     private void TextBox_Loaded(object sender, RoutedEventArgs e)
     {
         var textBox = sender as TextBox;
@@ -55,13 +52,23 @@ public partial class MainWindow : Window
         if (e.Key == Key.Enter && e.KeyModifiers == KeyModifiers.None)
         {
             var tb = sender as TextBox;
-            
-            if (IsLastTextBox(tb)) // если Enter нажат в последнем TextBox-е, то нужно создать новую строку
+
+            if (IsLastTextBox(tb))
             {
-                await CreateNewRow(tb);
+                if (tb.Tag?.ToString() == "First")
+                {
+                    // Если это первый TextBox, переключаемся на второй, если он видим
+                    await SwitchFocusToNextRow(tb);
+                }
+                else if (tb.Tag?.ToString() == "Second")
+                {
+                    // Если это второй TextBox и он последний, создаем новую строку
+                    await CreateNewRow(tb);
+                }
             }
-            else // иначе фокус должен переключиться на уже существующий TextBox
+            else
             {
+                // Иначе просто переключаем фокус на следующий TextBox
                 await SwitchFocusToNextRow(tb);
             }
         }
@@ -77,7 +84,7 @@ public partial class MainWindow : Window
         // }
         //
         // return true;
-        
+
         var currentElement = tb?.DataContext as Elements;
         var dc = DataContext as MainWindowViewModel;
 
@@ -110,70 +117,161 @@ public partial class MainWindow : Window
         // await Task.Delay(1);
         // var nextElement = KeyboardNavigationHandler.GetNext(tb!, NavigationDirection.Next);
         // nextElement?.Focus();
+
+        // var currentElement = tb?.DataContext as Elements;
+        // var dc = DataContext as MainWindowViewModel;
+        //
+        // if (currentElement != null && dc != null)
+        // {
+        //     var currentIndex = dc.ElementsList.IndexOf(currentElement);
+        //
+        //     // Если это первый TextBox, перемещаем фокус на второй
+        //     if (tb.Tag?.ToString() == "First" && currentIndex >= 0 && currentIndex < dc.ElementsList.Count)
+        //     {
+        //         // Прокручиваем до следующего элемента
+        //         ListBox.ScrollIntoView(currentIndex);
+        //         Console.WriteLine($"Scrolling to index: {currentIndex}");
+        //
+        //         // Ждем, чтобы гарантировать, что контейнер был создан
+        //         await Task.Delay(50);
+        //
+        //         // Получаем контейнер для текущего элемента
+        //         var currentContainer = ListBox.ItemContainerGenerator.ContainerFromIndex(currentIndex) as ListBoxItem;
+        //
+        //         if (currentContainer != null)
+        //         {
+        //             var nextTextBox = currentContainer.GetVisualDescendants()
+        //                 .OfType<TextBox>()
+        //                 .FirstOrDefault(x => x.Tag?.ToString() == "Second");
+        //
+        //             if (nextTextBox != null)
+        //             {
+        //                 await Dispatcher.UIThread.InvokeAsync(() =>
+        //                 {
+        //                     nextTextBox.Focus();
+        //                     Console.WriteLine("Focus set to Second TextBox.");
+        //                 });
+        //             }
+        //         }
+        //     }
+        //     // Если это второй TextBox, перемещаем фокус на следующий элемент в списке
+        //     else if (tb.Tag?.ToString() == "Second" && currentIndex >= 0 && currentIndex < dc.ElementsList.Count)
+        //     {
+        //         var nextIndex = currentIndex + 1;
+        //
+        //         // Проверяем, что следующий индекс не выходит за пределы списка
+        //         if (nextIndex < dc.ElementsList.Count)
+        //         {
+        //             // Прокручиваем до следующего элемента
+        //             ListBox.ScrollIntoView(nextIndex);
+        //             Console.WriteLine($"Scrolling to index: {nextIndex}");
+        //
+        //             // Ждем, чтобы гарантировать, что контейнер был создан
+        //             await Task.Delay(50);
+        //
+        //             // Получаем контейнер для следующего элемента
+        //             var nextContainer = ListBox.ItemContainerGenerator.ContainerFromIndex(nextIndex) as ListBoxItem;
+        //
+        //             if (nextContainer != null)
+        //             {
+        //                 // Находим первый TextBox в следующем элементе
+        //                 var nextTextBox = nextContainer.GetVisualDescendants()
+        //                     .OfType<TextBox>()
+        //                     .FirstOrDefault(x => x.Tag?.ToString() == "First");
+        //
+        //                 if (nextTextBox != null)
+        //                 {
+        //                     await Dispatcher.UIThread.InvokeAsync(() =>
+        //                     {
+        //                         nextTextBox.Focus();
+        //                         Console.WriteLine("Focus set to First TextBox in the next row.");
+        //                     });
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
         
         var currentElement = tb?.DataContext as Elements;
-        var dc = DataContext as MainWindowViewModel;
+    var dc = DataContext as MainWindowViewModel;
 
-        if (currentElement != null && dc != null)
+    if (currentElement != null && dc != null)
+    {
+        var currentIndex = dc.ElementsList.IndexOf(currentElement);
+
+        // Если это первый TextBox и существует второй TextBox, перемещаем фокус на него
+        if (tb.Tag?.ToString() == "First" && currentIndex >= 0 && currentIndex < dc.ElementsList.Count)
         {
-            var currentIndex = dc.ElementsList.IndexOf(currentElement);
+            var nextElement = dc.ElementsList[currentIndex];
 
-            // Если текущий индекс меньше последнего, то есть следующий элемент
-            if (currentIndex >= 0 && currentIndex < dc.ElementsList.Count - 1)
+            if (nextElement.Visible) // Проверяем видимость второго TextBox
             {
-                var nextIndex = currentIndex + 1;
-
-                // Прокручиваем до следующего элемента
-                ListBox.ScrollIntoView(nextIndex);
-                Console.WriteLine($"Scrolling to index: {nextIndex}");
-
-                // Ждем, чтобы гарантировать, что контейнер был создан
+                ListBox.ScrollIntoView(currentIndex);
                 await Task.Delay(50);
 
-                // Получаем контейнер для следующего элемента
+                var currentContainer = ListBox.ItemContainerGenerator.ContainerFromIndex(currentIndex) as ListBoxItem;
+
+                if (currentContainer != null)
+                {
+                    var nextTextBox = currentContainer.GetVisualDescendants()
+                        .OfType<TextBox>()
+                        .FirstOrDefault(x => x.Tag?.ToString() == "Second");
+
+                    if (nextTextBox != null)
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(() => nextTextBox.Focus());
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Если это второй TextBox или если второго TextBox нет, переключаемся на следующий элемент
+        if (tb.Tag?.ToString() == "Second" || !currentElement.Visible)
+        {
+            var nextIndex = currentIndex + 1;
+
+            // Проверяем, существует ли следующий элемент
+            if (nextIndex < dc.ElementsList.Count)
+            {
+                // Переключаем фокус на следующий элемент
+                ListBox.ScrollIntoView(nextIndex);
+                await Task.Delay(50);
+
                 var nextContainer = ListBox.ItemContainerGenerator.ContainerFromIndex(nextIndex) as ListBoxItem;
 
                 if (nextContainer != null)
                 {
-                    Console.WriteLine("Next container found.");
-
-                    // Получаем все TextBox внутри следующего контейнера
                     var nextTextBox = nextContainer.GetVisualDescendants()
                         .OfType<TextBox>()
                         .FirstOrDefault(x => x.Tag?.ToString() == "First");
 
                     if (nextTextBox != null)
                     {
-                        await Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            nextTextBox.Focus();
-                            Console.WriteLine("Focus set to next TextBox.");
-                        });
+                        await Dispatcher.UIThread.InvokeAsync(() => nextTextBox.Focus());
                     }
-                    else
-                    {
-                        Console.WriteLine("Next TextBox not found.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Next container not found.");
                 }
             }
+            // Если это последний элемент, создаем новый элемент
+            else if (nextIndex == dc.ElementsList.Count)
+            {
+                // Создаем новую строку
+                await CreateNewRow(tb);
+            }
         }
-        
     }
-    
-    
+    }
+
+
     private async Task CreateNewRow(TextBox? tb)
     {
         await Task.Delay(1);
         var dc = DataContext as MainWindowViewModel;
-        dc.AddNewRow.Execute(tb.DataContext as Elements).Subscribe(); 
-        
+        dc.AddNewRow.Execute(tb.DataContext as Elements).Subscribe();
+
         // Ждем немного для обновления UI
         await Task.Delay(1);
-                
+
         // Получаем индекс нового элемента
         var newElementIndex = dc.ElementsList.Count - 1;
 
@@ -195,6 +293,4 @@ public partial class MainWindow : Window
             newTextBox?.Focus();
         }
     }
-    
-    
 }

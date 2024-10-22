@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FocusChangingControlsSecondSolution")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae0a0f7fe5f98773359a5bd7388a87a33c3819f0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17dfe602bfcbc6a4b2ec196eac22e0961f460e59")]
 [assembly: System.Reflection.AssemblyProductAttribute("FocusChangingControlsSecondSolution")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FocusChangingControlsSecondSolution")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

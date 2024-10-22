@@ -19,6 +19,7 @@ public class MainWindowViewModel : ViewModelBase
         get => _elementsList;
         set => this.RaiseAndSetIfChanged(ref _elementsList, value);
     }
+    
 
     public MainWindowViewModel()
     {

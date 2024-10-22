@@ -59,7 +59,8 @@
                         <TextBox x:Name="SecondTextBox" Tag="Second" Grid.Column="2" 
                                  Text="{Binding Text2}" 
                                  KeyDown="Control_KeyDown" 
-                                 Loaded="TextBox_Loaded" />
+                                 Loaded="TextBox_Loaded" IsVisible="{Binding Visible}"/>
+                        
                         <CheckBox Grid.Column="3" Focusable="False" />
                     </Grid>
                 </DataTemplate>
